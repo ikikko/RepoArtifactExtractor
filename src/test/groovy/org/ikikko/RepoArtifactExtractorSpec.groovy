@@ -19,4 +19,13 @@ class RepoArtifactExtractorSpec extends Specification {
 		then:
 		true
 	}
+
+	def "POMのURLからアーティファクトのURLを抽出する"() {
+		setup:
+		def pomUrl = 'http://maven.seasar.org/maven2/org/seasar/cubby/cubby-unit/2.0.9/cubby-unit-2.0.9.pom'
+		def expectUrl = 'http://maven.seasar.org/maven2/org/seasar/cubby/cubby-unit/'
+
+		expect:
+		extractor.extractArtifactUrl(pomUrl) == expectUrl
+	}
 }
