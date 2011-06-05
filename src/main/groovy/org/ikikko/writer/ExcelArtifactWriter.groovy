@@ -8,7 +8,6 @@ import org.apache.poi.ss.usermodel.IndexedColors
 
 class ExcelArtifactWriter implements ArtifactWriter {
 
-	// Excel用フィールド
 	def excel
 	def book
 	def sheet
@@ -97,5 +96,4 @@ class ExcelArtifactWriter implements ArtifactWriter {
 
 		return cell
 	}
-
 }

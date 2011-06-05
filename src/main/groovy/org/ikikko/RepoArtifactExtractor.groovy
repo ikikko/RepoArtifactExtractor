@@ -1,15 +1,16 @@
 package org.ikikko
 
 import org.cyberneko.html.parsers.SAXParser
-import org.ikikko.writer.ConsoleArtifactWriter;
-import org.ikikko.writer.ExcelArtifactWriter;
+import org.ikikko.writer.ConsoleArtifactWriter
+import org.ikikko.writer.ExcelArtifactWriter
+import org.ikikko.writer.TracArtifactWriter
 
 class RepoArtifactExtractor {
 
 	// 実行方法
 	static def usage = '''
-Usage   : gradle run '\${excel file}' '\${extract url}
-Example : gradle run artifacts.xls http://maven.seasar.org/maven2/org/seasar/cubby/
+Usage   : gradle run '\${excel file}' '\${extract url} '\${trac url}'
+Example : gradle run artifacts.xls http://maven.seasar.org/maven2/org/seasar/cubby/ http://localhost:8080/trac/
 '''
 
 	// HTMLスクレイピング用パターン
@@ -24,16 +25,18 @@ Example : gradle run artifacts.xls http://maven.seasar.org/maven2/org/seasar/cub
 
 	def execute(args) {
 		// 引数セット
-		if (args.length != 2) {
+		if (args.length != 3) {
 			System.err.println usage
 			System.exit 1
 		}
 		def excel = args[0]
 		def baseUrl = args[1]
+		def tracUrl = args[2]
 
 		writers = [
 			new ConsoleArtifactWriter(),
-			new ExcelArtifactWriter(excel)
+			new ExcelArtifactWriter(excel),
+			new TracArtifactWriter(tracUrl),
 		]
 
 		// Main

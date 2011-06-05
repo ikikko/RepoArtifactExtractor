@@ -26,6 +26,7 @@ mainClassName = "org.ikikko.RepoArtifactExtractor"
 run {
 	args = [
 		"$buildDir/artifact.xls",
-		url
+		baseUrl,
+		tracUrl,
 	]
 }

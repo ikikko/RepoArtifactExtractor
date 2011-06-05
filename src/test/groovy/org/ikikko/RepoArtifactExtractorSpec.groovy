@@ -11,11 +11,12 @@ class RepoArtifactExtractorSpec extends Specification {
 	def "アーティファクトを抽出する"() {
 		setup:
 		def excel = 'bin/artifact.xls'
-		def url = 'http://maven.seasar.org/maven2/org/seasar/cubby/'
+		def baseUrl = 'http://maven.seasar.org/maven2/org/seasar/cubby/'
+		def tracUrl = 'http://localhost:8080/trac/'
 		new File(excel).delete()
 
 		when:
-		extractor.execute([excel, url]as String[])
+		extractor.execute([excel, baseUrl, tracUrl]as String[])
 
 		then:
 		new File(excel).exists()
