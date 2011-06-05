@@ -9,15 +9,16 @@ class RepoArtifactExtractorSpec extends Specification {
 	def extractor = new RepoArtifactExtractor()
 
 	def "アーティファクトを抽出する"() {
+		setup:
+		def excel = 'bin/artifact.xls'
+		def url = 'http://maven.seasar.org/maven2/org/seasar/cubby/'
+		new File(excel).delete()
+
 		when:
-		extractor.execute([
-			'bin/artifact.xls',
-			'http://maven.seasar.org/maven2/org/seasar/cubby/'
-		]
-		as String[])
+		extractor.execute([excel, url]as String[])
 
 		then:
-		true
+		new File(excel).exists()
 	}
 
 	def "POMのURLからアーティファクトのURLを抽出する"() {
