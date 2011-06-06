@@ -54,7 +54,9 @@ Example : gradle run artifacts.xls http://maven.seasar.org/maven2/org/seasar/cub
 
 		def links = html.'**'.findAll{
 			// トラバーサルロジックは色々変わるかも
-			it.name() == 'A' && DIR_PATTERN.matcher(it.@href.toString()).matches()
+			it.name() == 'A' &&
+					!it.@href.toString().startsWith('.') &&
+					DIR_PATTERN.matcher(it.@href.toString()).matches()
 		}
 
 		// バージョン階層のディレクトリまでトラバースしたら、最新のバージョンのみ対象とする
@@ -114,5 +116,4 @@ Example : gradle run artifacts.xls http://maven.seasar.org/maven2/org/seasar/cub
 
 		return artifactUrl
 	}
-
 }
