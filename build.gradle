@@ -21,8 +21,6 @@ dependencies {
 
 mainClassName = "org.ikikko.RepoArtifactExtractor"
 
-// TODO runタスクじゃなくても、urlの指定が必要
-
 run {
 	args = [
 		"$buildDir/artifact.xls",
