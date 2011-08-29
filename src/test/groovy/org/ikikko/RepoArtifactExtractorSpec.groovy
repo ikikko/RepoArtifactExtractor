@@ -30,4 +30,12 @@ class RepoArtifactExtractorSpec extends Specification {
 		expect:
 		extractor.extractArtifactUrl(pomUrl) == expectUrl
 	}
+
+	def "最新バージョンを取得する"() {
+		setup:
+		def url = 'http://maven.seasar.org/maven2/org/seasar/cubby/cubby-unit/maven-metadata.xml'
+
+		expect:
+		extractor.getLatestVersion(url) == '2.0.9'
+	}
 }

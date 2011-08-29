@@ -16,6 +16,7 @@ Example : gradle run artifacts.xls http://maven.seasar.org/maven2/org/seasar/cub
 	// HTMLスクレイピング用パターン
 	static final def DIR_PATTERN = ~/[^?\/]+\//
 	static final def POM_PATTERN = ~/.+\.pom/
+	static final def METADATA_PATTERN = ~/maven-metadata\.xml/
 
 	def writers
 
@@ -62,8 +63,9 @@ Example : gradle run artifacts.xls http://maven.seasar.org/maven2/org/seasar/cub
 		// バージョン階層のディレクトリまでトラバースしたら、最新のバージョンのみ対象とする
 		def first = links[0]
 		if (isPomExistsDir("${url}${first.@href}")) {
-			def latest = links[-1]
-			findPom("${url}${latest.@href}")
+			def metadataUrl = "${url}${getMetadata(url).@href.toString()}"
+			def latest = getLatestVersion(metadataUrl)
+			findPom("${url}${latest}/")
 		} else {
 			links.each { traverseDir("${url}${it.@href}") }
 		}
@@ -78,6 +80,31 @@ Example : gradle run artifacts.xls http://maven.seasar.org/maven2/org/seasar/cub
 
 		return html.'**'.any {
 			it.name() == 'A' && POM_PATTERN.matcher(it.@href.toString()).matches()
+		}
+	}
+
+	/**
+	 * メタデータを取得する
+	 */
+	def getMetadata(url) {
+		def parser = new XmlSlurper(new SAXParser())
+		def html = parser.parse(url)
+
+		return html.'**'.find {
+			it.name() == 'A' && METADATA_PATTERN.matcher(it.@href.toString()).matches()
+		}
+	}
+
+	/**
+	 * 最新バージョンを取得する
+	 */
+	def getLatestVersion(metadataUrl) {
+		def metadata = new XmlSlurper().parse(metadataUrl)
+
+		if (metadata.versioning.latest.isEmpty() == false) {
+			return metadata.versioning.latest.toString()
+		} else {
+			return metadata.versioning.versions.version[-1].toString()
 		}
 	}
 
