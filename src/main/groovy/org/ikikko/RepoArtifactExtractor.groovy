@@ -1,5 +1,7 @@
 package org.ikikko
 
+import groovy.transform.Canonical
+
 import org.cyberneko.html.parsers.SAXParser
 import org.ikikko.writer.ConsoleArtifactWriter
 import org.ikikko.writer.ExcelArtifactWriter
@@ -12,6 +14,21 @@ class RepoArtifactExtractor {
 Usage   : gradle run '\${excel file}' '\${extract url} '\${trac url}'
 Example : gradle run artifacts.xls http://maven.seasar.org/maven2/org/seasar/cubby/ http://localhost:8080/trac/
 '''
+	@Canonical
+	static class Artifact implements Comparable {
+		def groupId
+		def artifactId
+
+		@Override
+		public int compareTo(def o) {
+			"${groupId}${artifactId}" <=> "${o.groupId}${o.artifactId}"
+		}
+	}
+
+	static class Versions {
+		def snapshot
+		def release
+	}
 
 	// HTMLスクレイピング用パターン
 	static final def DIR_PATTERN = ~/[^?\/]+\//
@@ -20,11 +37,14 @@ Example : gradle run artifacts.xls http://maven.seasar.org/maven2/org/seasar/cub
 
 	def writers
 
+	def artifactMap = [:].withDefault{ new Versions() }
+
 	public static void main(String[] args) {
 		new RepoArtifactExtractor().execute(args)
 	}
 
 	def execute(args) {
+		// TODO そろそろ引数が多くなってきたので、プロパティファイルに切り出したほうがいい
 		// 引数セット
 		if (args.length != 3) {
 			System.err.println usage
@@ -43,6 +63,12 @@ Example : gradle run artifacts.xls http://maven.seasar.org/maven2/org/seasar/cub
 		// Main
 		writers.each { it.init() }
 		traverseDir(baseUrl)
+		artifactMap.sort{ it.key }.each { artifact, versions ->
+			// TODO ハイパーリンク用URLを組み立てる
+			writers.each {
+				it.write(artifact.groupId, artifact.artifactId, versions.snapshot, " url ")
+			}
+		}
 		writers.each { it.close() }
 	}
 
@@ -131,7 +157,13 @@ Example : gradle run artifacts.xls http://maven.seasar.org/maven2/org/seasar/cub
 		def artifactId = pom.artifactId
 		def version = pom.version.isEmpty() ? pom.parent.version : pom.version
 
-		writers.each { it.write(groupId, artifactId, version, extractArtifactUrl(url)) }
+		// TODO SNAPSHOTとRELEASEに応じて、書込み先のプロパティを切り替える
+		def artifact = new Artifact()
+		artifact.groupId = groupId
+		artifact.artifactId = artifactId
+		def versions = artifactMap[artifact]
+		versions.snapshot = version
+		artifactMap[artifact] = versions
 	}
 
 	/**
