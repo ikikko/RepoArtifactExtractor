@@ -21,17 +21,6 @@ class RepoArtifactExtractorSpec extends Specification {
 		new File(excel).exists()
 	}
 
-	def "POMのURLからアーティファクトのURLを抽出する"() {
-		setup:
-		def pomUrl = 'http://maven.seasar.org/maven2/org/seasar/cubby/cubby-unit/2.0.9/cubby-unit-2.0.9.pom'
-
-		when:
-		def result = extractor.extractArtifactUrl(pomUrl)
-
-		then:
-		result == 'http://maven.seasar.org/maven2/org/seasar/cubby/cubby-unit/'
-	}
-
 	def "最新バージョンを取得する"() {
 		setup:
 		def url = 'http://maven.seasar.org/maven2/org/seasar/cubby/cubby-unit/maven-metadata.xml'

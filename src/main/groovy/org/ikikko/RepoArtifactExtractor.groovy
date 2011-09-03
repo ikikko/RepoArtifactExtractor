@@ -6,6 +6,8 @@ import org.cyberneko.html.parsers.SAXParser
 
 class RepoArtifactExtractor {
 
+	// TODO HTMLスクレイピングではなくて、別の方法も検討する（例：Artifactory REST API）
+
 	// 実行方法
 	// TODO 現状に合わせて修正する
 	static def usage = '''
@@ -160,16 +162,6 @@ Example : gradle run artifacts.xls http://maven.seasar.org/maven2/org/seasar/cub
 		def versions = artifactMap[artifact]
 		versions."${repositoryType}" = version
 		artifactMap[artifact] = versions
-	}
-
-	/**
-	 * POMのURLからアーティファクトURLを抽出する
-	 */
-	def extractArtifactUrl(pomUrl) {
-		def paths = pomUrl.tokenize('/')
-		def artifactUrl = (pomUrl - paths[-1] - paths[-2])[0..-2]
-
-		return artifactUrl
 	}
 
 	/**
