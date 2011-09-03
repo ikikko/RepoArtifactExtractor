@@ -39,6 +39,8 @@ Example : gradle run artifacts.xls http://maven.seasar.org/maven2/org/seasar/cub
 
 	def artifactMap = [:].withDefault{ new Versions() }
 
+	def currentReposId
+
 	public static void main(String[] args) {
 		new RepoArtifactExtractor().execute()
 	}
@@ -52,6 +54,7 @@ Example : gradle run artifacts.xls http://maven.seasar.org/maven2/org/seasar/cub
 		writers.each { it.init() }
 
 		config.repository.each { id, repos ->
+			currentReposId = id
 			traverseDir(repos.url)
 		}
 
@@ -149,12 +152,13 @@ Example : gradle run artifacts.xls http://maven.seasar.org/maven2/org/seasar/cub
 		def artifactId = pom.artifactId.toString()
 		def version = pom.version.isEmpty() ? pom.parent.version.toString() : pom.version.toString()
 
-		// TODO SNAPSHOTとRELEASEに応じて、書込み先のプロパティを切り替える
+		def repositoryType = config.repository."${currentReposId}".type
+
 		def artifact = new Artifact()
 		artifact.groupId = groupId
 		artifact.artifactId = artifactId
 		def versions = artifactMap[artifact]
-		versions.snapshot = version
+		versions."${repositoryType}" = version
 		artifactMap[artifact] = versions
 	}
 
