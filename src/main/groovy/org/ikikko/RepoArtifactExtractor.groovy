@@ -3,13 +3,11 @@ package org.ikikko
 import groovy.transform.Canonical
 
 import org.cyberneko.html.parsers.SAXParser
-import org.ikikko.writer.ConsoleArtifactWriter
-import org.ikikko.writer.ExcelArtifactWriter
-import org.ikikko.writer.TracArtifactWriter
 
 class RepoArtifactExtractor {
 
 	// 実行方法
+	// TODO 現状に合わせて修正する
 	static def usage = '''
 Usage   : gradle run '\${excel file}' '\${extract url} '\${trac url}'
 Example : gradle run artifacts.xls http://maven.seasar.org/maven2/org/seasar/cubby/ http://localhost:8080/trac/
@@ -35,6 +33,8 @@ Example : gradle run artifacts.xls http://maven.seasar.org/maven2/org/seasar/cub
 	static final def POM_PATTERN = ~/.+\.pom/
 	static final def METADATA_PATTERN = ~/maven-metadata\.xml/
 
+	def config = new ConfigSlurper().parse(RepoArtifactExtractor.class.getResource('/config.groovy'))
+
 	def writers
 
 	def artifactMap = [:].withDefault{ new Versions() }
@@ -44,25 +44,13 @@ Example : gradle run artifacts.xls http://maven.seasar.org/maven2/org/seasar/cub
 	}
 
 	def execute(args) {
-		// TODO そろそろ引数が多くなってきたので、プロパティファイルに切り出したほうがいい
-		// 引数セット
-		if (args.length != 3) {
-			System.err.println usage
-			System.exit 1
+		writers = config.writer.collect { k, v ->
+			v.clazz.newInstance(v.args)
 		}
-		def excel = args[0]
-		def baseUrl = args[1]
-		def tracUrl = args[2]
-
-		writers = [
-			new ConsoleArtifactWriter(),
-			new ExcelArtifactWriter(excel),
-			new TracArtifactWriter(tracUrl),
-		]
 
 		// Main
 		writers.each { it.init() }
-		traverseDir(baseUrl)
+		traverseDir(config.url.snapshot)
 		artifactMap.sort{ it.key }.each { artifact, versions ->
 			// TODO ハイパーリンク用URLを組み立てる
 			writers.each {
