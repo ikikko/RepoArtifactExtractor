@@ -75,12 +75,11 @@ class ExcelArtifactWriter implements ArtifactWriter {
 	def createArtifactRow(artifact,  versions, url) {
 		def ivy = "<dependency org=\"${artifact.groupId}\" name=\"${artifact.artifactId}\" rev=\"${versions.release}\" />"
 
-		cell(rowIndex, 0).setCellValue(artifact.groupId.toString())
-		cell(rowIndex, 1).setCellValue(artifact.artifactId.toString())
-		cell(rowIndex, 2).setCellValue(versions.release.toString())
-		cell(rowIndex, 3).setCellValue(versions.snapshot.toString())
-		cell(rowIndex, 4).setCellValue(ivy.toString())
-
+		cell(rowIndex, 0).setCellValue(artifact.groupId)
+		cell(rowIndex, 1).setCellValue(artifact.artifactId)
+		cell(rowIndex, 2).setCellValue(versions.release)
+		cell(rowIndex, 3).setCellValue(versions.snapshot)
+		cell(rowIndex, 4).setCellValue(ivy)
 
 		def link = book.getCreationHelper().createHyperlink(Hyperlink.LINK_URL)
 		link.setAddress(url)

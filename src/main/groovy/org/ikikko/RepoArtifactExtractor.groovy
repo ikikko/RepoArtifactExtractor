@@ -145,10 +145,9 @@ Example : gradle run artifacts.xls http://maven.seasar.org/maven2/org/seasar/cub
 	def parsePom(url) {
 		def pom = new XmlSlurper().parse(url);
 
-		// FIXME Stringを保持する
-		def groupId = pom.groupId.isEmpty() ? pom.parent.groupId : pom.groupId
-		def artifactId = pom.artifactId
-		def version = pom.version.isEmpty() ? pom.parent.version : pom.version
+		def groupId = pom.groupId.isEmpty() ? pom.parent.groupId.toString() : pom.groupId.toString()
+		def artifactId = pom.artifactId.toString()
+		def version = pom.version.isEmpty() ? pom.parent.version.toString() : pom.version.toString()
 
 		// TODO SNAPSHOTとRELEASEに応じて、書込み先のプロパティを切り替える
 		def artifact = new Artifact()
