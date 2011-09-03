@@ -50,7 +50,6 @@ Example : gradle run artifacts.xls http://maven.seasar.org/maven2/org/seasar/cub
 			writer.clazz.newInstance(writer.args)
 		}
 
-		// Main
 		writers.each { it.init() }
 
 		config.repository.each { id, repos ->
@@ -59,11 +58,12 @@ Example : gradle run artifacts.xls http://maven.seasar.org/maven2/org/seasar/cub
 		}
 
 		artifactMap.sort{ it.key }.each { artifact, versions ->
-			// TODO ハイパーリンク用URLを組み立てる
 			writers.each {
-				it.write(artifact, versions, " url ")
+				def url = createLinkToArtifact(artifact, config.hyperlink.baseUrl)
+				it.write(artifact, versions, url)
 			}
 		}
+
 		writers.each { it.close() }
 	}
 
@@ -171,4 +171,15 @@ Example : gradle run artifacts.xls http://maven.seasar.org/maven2/org/seasar/cub
 
 		return artifactUrl
 	}
+
+	/**
+	 * アーティファクトへのリンクを構築する
+	 */
+	def createLinkToArtifact(artifact, baseUrl) {
+		def groupIdUrl = artifact.groupId.tr('.', '/')
+		def artifactIdUrl = artifact.artifactId.tr('.', '/')
+
+		return "$baseUrl$groupIdUrl/$artifactIdUrl/"
+	}
+
 }

@@ -1,6 +1,7 @@
 package org.ikikko
 
 import org.apache.poi.hssf.record.formula.functions.T
+import org.ikikko.RepoArtifactExtractor.Artifact
 
 import spock.lang.Specification
 
@@ -23,10 +24,12 @@ class RepoArtifactExtractorSpec extends Specification {
 	def "POMのURLからアーティファクトのURLを抽出する"() {
 		setup:
 		def pomUrl = 'http://maven.seasar.org/maven2/org/seasar/cubby/cubby-unit/2.0.9/cubby-unit-2.0.9.pom'
-		def expectUrl = 'http://maven.seasar.org/maven2/org/seasar/cubby/cubby-unit/'
 
-		expect:
-		extractor.extractArtifactUrl(pomUrl) == expectUrl
+		when:
+		def result = extractor.extractArtifactUrl(pomUrl)
+
+		then:
+		result == 'http://maven.seasar.org/maven2/org/seasar/cubby/cubby-unit/'
 	}
 
 	def "最新バージョンを取得する"() {
@@ -35,5 +38,19 @@ class RepoArtifactExtractorSpec extends Specification {
 
 		expect:
 		extractor.getLatestVersion(url) == '2.0.9'
+	}
+
+	def "アーティファクトへのリンクを構築する"() {
+		setup:
+		def artifact = new Artifact()
+		artifact.groupId = 'org.seasar.cubby'
+		artifact.artifactId = 'cubby-unit'
+		def baseUrl = 'http://maven.seasar.org/maven2/'
+
+		when:
+		def result = extractor.createLinkToArtifact(artifact, baseUrl)
+
+		then:
+		result == 'http://maven.seasar.org/maven2/org/seasar/cubby/cubby-unit/'
 	}
 }

@@ -8,15 +8,9 @@ repository {
 		url = 'http://maven.seasar.org/maven2/org/seasar/cubby/'
 		type = 'snapshot'
 	}
-
-	thirdparty {
-		url = 'http://maven.seasar.org/maven2/org/seasar/cubby/'
-		type = 'release'
-	}
 }
 
-// TODO URLのマッピングに使う
-virtual = 'http://maven.seasar.org/maven2/org/seasar/cubby/'
+hyperlink { baseUrl = 'http://maven.seasar.org/maven2/org/seasar/cubby/' }
 
 writer {
 	console {
