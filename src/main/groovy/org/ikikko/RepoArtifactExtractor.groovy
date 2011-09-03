@@ -8,6 +8,9 @@ class RepoArtifactExtractor {
 
 	// TODO HTMLスクレイピングではなくて、別の方法も検討する（例：Artifactory REST API）
 
+	/**
+	 * アーティファクトを一意に特定するクラス
+	 */
 	@EqualsAndHashCode
 	static class Artifact implements Comparable {
 		def groupId
@@ -19,6 +22,9 @@ class RepoArtifactExtractor {
 		}
 	}
 
+	/**
+	 * 各々のバージョンを特定するクラス
+	 */
 	static class Versions {
 		def snapshot
 		def release
@@ -31,8 +37,6 @@ class RepoArtifactExtractor {
 
 	def config = new ConfigSlurper().parse(RepoArtifactExtractor.class.getResource('/config.groovy'))
 
-	def writers
-
 	def artifactMap = [:].withDefault{ new Versions() }
 
 	def currentReposId
@@ -42,7 +46,7 @@ class RepoArtifactExtractor {
 	}
 
 	def execute() {
-		writers = config.writer.collect { id, writer ->
+		def writers = config.writer.collect { id, writer ->
 			writer.clazz.newInstance(writer.args)
 		}
 
