@@ -8,12 +8,6 @@ class RepoArtifactExtractor {
 
 	// TODO HTMLスクレイピングではなくて、別の方法も検討する（例：Artifactory REST API）
 
-	// 実行方法
-	// TODO 現状に合わせて修正する
-	static def usage = '''
-Usage   : gradle run '\${excel file}' '\${extract url} '\${trac url}'
-Example : gradle run artifacts.xls http://maven.seasar.org/maven2/org/seasar/cubby/ http://localhost:8080/trac/
-'''
 	@EqualsAndHashCode
 	static class Artifact implements Comparable {
 		def groupId

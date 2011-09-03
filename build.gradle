@@ -2,6 +2,8 @@ apply plugin: 'groovy'
 apply plugin: 'eclipse'
 apply plugin: 'application'
 
+defaultTasks 'clean', 'run'
+
 repositories { mavenCentral() }
 
 dependencies {
@@ -20,11 +22,3 @@ dependencies {
 }
 
 mainClassName = "org.ikikko.RepoArtifactExtractor"
-
-run {
-	args = [
-		"$buildDir/artifact.xls",
-		baseUrl,
-		tracUrl,
-	]
-}
