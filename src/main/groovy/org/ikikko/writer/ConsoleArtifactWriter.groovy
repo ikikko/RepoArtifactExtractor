@@ -7,8 +7,8 @@ class ConsoleArtifactWriter implements ArtifactWriter {
 	}
 
 	@Override
-	def write(groupId, artifactId, version, url) {
-		println "groupId : $groupId, artifactId : $artifactId, version : $version"
+	def write(artifact, versions, url) {
+		println "[groupId : ${artifact.groupId}], [artifactId : ${artifact.artifactId}], [release : ${versions.release}], [snapshot : ${versions.snapshot}]"
 	}
 
 	@Override

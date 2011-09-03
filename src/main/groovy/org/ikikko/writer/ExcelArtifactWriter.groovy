@@ -8,6 +8,14 @@ import org.apache.poi.ss.usermodel.IndexedColors
 
 class ExcelArtifactWriter implements ArtifactWriter {
 
+	static final def columns = [
+		'Group ID',
+		'Artifact ID',
+		'Release Version',
+		'Snapshot Version',
+		'Ivy Dependency',
+	]
+
 	def excel
 	def book
 	def sheet
@@ -26,13 +34,13 @@ class ExcelArtifactWriter implements ArtifactWriter {
 	}
 
 	@Override
-	def write(groupId, artifactId, version, url) {
-		createArtifactRow(groupId, artifactId, version, url)
+	def write(artifact, versions, url) {
+		createArtifactRow(artifact, versions, url)
 	}
 
 	@Override
 	def close() {
-		for (i in 0..3) {
+		for (int i = 0; i < columns.size(); i++) {
 			sheet.autoSizeColumn(i)
 		}
 
@@ -45,17 +53,16 @@ class ExcelArtifactWriter implements ArtifactWriter {
 	 * Excelファイルのヘッダ行を作成する
 	 */
 	def createHeader() {
-		cell(rowIndex, 0).setCellValue('Group ID')
-		cell(rowIndex, 1).setCellValue('Artifact ID')
-		cell(rowIndex, 2).setCellValue('Version')
-		cell(rowIndex, 3).setCellValue('Ivy Dependency')
+		for (int i = 0; i < columns.size(); i++) {
+			cell(rowIndex, i).setCellValue(columns[i])
+		}
 
 		def font = book.createFont()
 		font.setBoldweight(Font.BOLDWEIGHT_BOLD)
 		def style = book.createCellStyle()
 		style.setFont(font)
 		style.setAlignment(CellStyle.ALIGN_CENTER);
-		for (i in 0..3) {
+		for (int i = 0; i < columns.size(); i++) {
 			cell(rowIndex, i).setCellStyle(style)
 		}
 
@@ -65,13 +72,15 @@ class ExcelArtifactWriter implements ArtifactWriter {
 	/**
 	 * アーティファクトの行を作成する
 	 */
-	def createArtifactRow(groupId, artifactId, version, url) {
-		def ivy = "<dependency org=\"$groupId\" name=\"$artifactId\" rev=\"$version\" />"
+	def createArtifactRow(artifact,  versions, url) {
+		def ivy = "<dependency org=\"${artifact.groupId}\" name=\"${artifact.artifactId}\" rev=\"${versions.release}\" />"
 
-		cell(rowIndex, 0).setCellValue(groupId.toString())
-		cell(rowIndex, 1).setCellValue(artifactId.toString())
-		cell(rowIndex, 2).setCellValue(version.toString())
-		cell(rowIndex, 3).setCellValue(ivy.toString())
+		cell(rowIndex, 0).setCellValue(artifact.groupId.toString())
+		cell(rowIndex, 1).setCellValue(artifact.artifactId.toString())
+		cell(rowIndex, 2).setCellValue(versions.release.toString())
+		cell(rowIndex, 3).setCellValue(versions.snapshot.toString())
+		cell(rowIndex, 4).setCellValue(ivy.toString())
+
 
 		def link = book.getCreationHelper().createHyperlink(Hyperlink.LINK_URL)
 		link.setAddress(url)

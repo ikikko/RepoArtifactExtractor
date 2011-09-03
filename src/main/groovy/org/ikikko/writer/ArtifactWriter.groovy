@@ -1,10 +1,12 @@
 package org.ikikko.writer
 
+
+
 interface ArtifactWriter {
 
 	def init()
 
-	def write(groupId, artifactId, version, url)
+	def write(Artifact, Versions, url)
 
 	def close()
 }

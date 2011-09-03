@@ -1,6 +1,6 @@
 package org.ikikko
 
-import groovy.transform.Canonical
+import groovy.transform.EqualsAndHashCode
 
 import org.cyberneko.html.parsers.SAXParser
 
@@ -12,7 +12,7 @@ class RepoArtifactExtractor {
 Usage   : gradle run '\${excel file}' '\${extract url} '\${trac url}'
 Example : gradle run artifacts.xls http://maven.seasar.org/maven2/org/seasar/cubby/ http://localhost:8080/trac/
 '''
-	@Canonical
+	@EqualsAndHashCode
 	static class Artifact implements Comparable {
 		def groupId
 		def artifactId
@@ -40,21 +40,25 @@ Example : gradle run artifacts.xls http://maven.seasar.org/maven2/org/seasar/cub
 	def artifactMap = [:].withDefault{ new Versions() }
 
 	public static void main(String[] args) {
-		new RepoArtifactExtractor().execute(args)
+		new RepoArtifactExtractor().execute()
 	}
 
-	def execute(args) {
-		writers = config.writer.collect { k, v ->
-			v.clazz.newInstance(v.args)
+	def execute() {
+		writers = config.writer.collect { id, writer ->
+			writer.clazz.newInstance(writer.args)
 		}
 
 		// Main
 		writers.each { it.init() }
-		traverseDir(config.url.snapshot)
+
+		config.repository.each { id, repos ->
+			traverseDir(repos.url)
+		}
+
 		artifactMap.sort{ it.key }.each { artifact, versions ->
 			// TODO ハイパーリンク用URLを組み立てる
 			writers.each {
-				it.write(artifact.groupId, artifact.artifactId, versions.snapshot, " url ")
+				it.write(artifact, versions, " url ")
 			}
 		}
 		writers.each { it.close() }
@@ -141,6 +145,7 @@ Example : gradle run artifacts.xls http://maven.seasar.org/maven2/org/seasar/cub
 	def parsePom(url) {
 		def pom = new XmlSlurper().parse(url);
 
+		// FIXME Stringを保持する
 		def groupId = pom.groupId.isEmpty() ? pom.parent.groupId : pom.groupId
 		def artifactId = pom.artifactId
 		def version = pom.version.isEmpty() ? pom.parent.version : pom.version

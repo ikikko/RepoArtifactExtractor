@@ -1,10 +1,22 @@
-url {
-	release = 'http://maven.seasar.org/maven2/org/seasar/cubby/'
-	snapshot = 'http://maven.seasar.org/maven2/org/seasar/cubby/'
-	thirdparty = 'http://maven.seasar.org/maven2/org/seasar/cubby/'
+repository {
+	release {
+		url = 'http://maven.seasar.org/maven2/org/seasar/cubby/'
+		type = 'release'
+	}
 
-	virtual = 'http://maven.seasar.org/maven2/org/seasar/cubby/'
+	snapshot {
+		url = 'http://maven.seasar.org/maven2/org/seasar/cubby/'
+		type = 'snapshot'
+	}
+
+	thirdparty {
+		url = 'http://maven.seasar.org/maven2/org/seasar/cubby/'
+		type = 'release'
+	}
 }
+
+// TODO URLのマッピングに使う
+virtual = 'http://maven.seasar.org/maven2/org/seasar/cubby/'
 
 writer {
 	console {
@@ -16,10 +28,8 @@ writer {
 		args = 'bin/artifact.xls'
 	}
 
-	/*
-	 trac {
-	 clazz = org.ikikko.writer.TracArtifactWriter.class
-	 args = 'http://localhost:8080/trac/'
-	 }
-	 */
+	//	trac {
+	//		clazz = org.ikikko.writer.TracArtifactWriter.class
+	//		args = 'http://localhost:8080/trac/'
+	//	}
 }

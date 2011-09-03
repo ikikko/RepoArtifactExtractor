@@ -50,13 +50,13 @@ class TracArtifactWriter implements ArtifactWriter {
 	@Override
 	def init() {
 		proxy = new XMLRPCServerProxy18("${url}rpc")
-		content << "|| '''groupId''' || '''artifactId''' || '''version''' || '''Ivy Depencency''' ||$separator"
+		content << "|| '''groupId''' || '''artifactId''' || '''release version''' || '''snapshot version''' || '''Ivy Depencency''' ||$separator"
 	}
 
 	@Override
-	def write(groupId, artifactId, version, url) {
-		def ivy = "<dependency org=\"$groupId\" name=\"$artifactId\" rev=\"$version\" />"
-		content << "|| $groupId || [$url $artifactId] || $version || $ivy ||$separator"
+	def write(artifact, versions, url) {
+		def ivy = "<dependency org=\"${artifact.groupId}\" name=\"${artifact.artifactId}\" rev=\"${versions.release}\" />"
+		content << "|| ${artifact.groupId} || [$url ${artifact.artifactId}] || ${versions.release} || || ${versions.snapshot} || $ivy ||$separator"
 	}
 
 	@Override
