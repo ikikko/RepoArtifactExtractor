@@ -81,8 +81,12 @@ class RepoArtifactExtractor {
 					DIR_PATTERN.matcher(it.@href.toString()).matches()
 		}
 
-		// バージョン階層のディレクトリまでトラバースしたら、最新のバージョンのみ対象とする
 		def first = links[0]
+		if (first == null) {
+			return
+		}
+
+		// バージョン階層のディレクトリ(pom.xmlがあるディレクトリ)までトラバースしたら、最新のバージョンのみ対象とする
 		if (isPomExistsDir("${url}${first.@href}")) {
 			def metadataUrl = "${url}${getMetadata(url).@href.toString()}"
 			def latest = getLatestVersion(metadataUrl)
