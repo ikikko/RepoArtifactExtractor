@@ -19,7 +19,7 @@ writer {
 
 	excel {
 		clazz = org.ikikko.writer.ExcelArtifactWriter.class
-		args = 'bin/artifact.xls'
+		args = 'build/artifact.xls'
 	}
 
 	//	trac {
