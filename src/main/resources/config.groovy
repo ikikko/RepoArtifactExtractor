@@ -5,8 +5,13 @@ repository {
 	}
 
 	snapshot {
-		url = 'http://maven.seasar.org/maven2/org/seasar/cubby/'
+		url = 'http://maven.seasar.org/maven2-snapshot/org/seasar/cubby/'
 		type = 'snapshot'
+	}
+
+	thirdparty {
+		url = 'http://maven.seasar.org/maven2/org/seasar/mayaa/'
+		type = 'release'
 	}
 }
 
