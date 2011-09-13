@@ -55,7 +55,9 @@ class TracArtifactWriter implements ArtifactWriter {
 
 	@Override
 	def write(artifact, versions, url) {
-		def ivy = "<dependency org=\"${artifact.groupId}\" name=\"${artifact.artifactId}\" rev=\"${versions.release}\" />"
+		def rev = versions.release ?: versions.snapshot
+		def ivy = "<dependency org=\"${artifact.groupId}\" name=\"${artifact.artifactId}\" rev=\"${rev}\" />"
+
 		content << "|| ${artifact.groupId} || [$url ${artifact.artifactId}] || ${versions.release} || || ${versions.snapshot} || $ivy ||$separator"
 	}
 

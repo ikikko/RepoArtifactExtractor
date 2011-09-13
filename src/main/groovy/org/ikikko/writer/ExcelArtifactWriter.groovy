@@ -73,7 +73,8 @@ class ExcelArtifactWriter implements ArtifactWriter {
 	 * アーティファクトの行を作成する
 	 */
 	def createArtifactRow(artifact,  versions, url) {
-		def ivy = "<dependency org=\"${artifact.groupId}\" name=\"${artifact.artifactId}\" rev=\"${versions.release}\" />"
+		def rev = versions.release ?: versions.snapshot
+		def ivy = "<dependency org=\"${artifact.groupId}\" name=\"${artifact.artifactId}\" rev=\"${rev}\" />"
 
 		cell(rowIndex, 0).setCellValue(artifact.groupId)
 		cell(rowIndex, 1).setCellValue(artifact.artifactId)
